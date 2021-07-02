@@ -75,11 +75,11 @@
               <!-- <li><i class="far fa-user-circle"></i>&nbsp;Messages to be displayed here l</li> -->
             </div>
           </div>
-          <form class="inputMessage d-flex justify-content-between mt-1 mb-2" action="">
+          <form class="inputMessage d-flex justify-content-between mb-2" action="">
             <div class="col-10 mx-0 p-0">
-              <input autofocus type="text" autocomplete="off" class="inputField form-control mx-0" id="formGroupExampleInput" style="border: none 0px !important; outline: none" placeholder="Type here...." />
+              <input autofocus type="text" autocomplete="off" class="inputField form-control mx-0 shadow-none" id="formGroupExampleInput" style="border: none 0px !important; outline: none" placeholder="Type here...." />
             </div>
-            <button onclick="sendToServer()" class="col-2 mx-0" type="button" class="btn btn-light"><i class="far fa-paper-plane"></i></button>
+            <button onclick="sendToServer()" class="col-2 mx-0" type="button" class="btn btn-light shadow-none border-0"><i class="far fa-paper-plane"></i></button>
           </form>
         </div>
       </div>
@@ -114,7 +114,7 @@
         }
       }
       socket.on("chatMessageToAllClients", (data) => {
-        let id = Date.now() % 10000
+        let id = Date.now() % 100000
         let message = `<li class="p-2 m-1 mb-2 text ${socket.id == data.id ? `text-end` : ""}" id="key${id}"></li>`
         document.querySelector(`.messagelist`).innerHTML += message
         document.querySelector(`#key${id}`).innerHTML += socket.id != data.id ? `<span class="username">${data.name}: <small></small></span>` : `<span class="username"><small></small></span>`
