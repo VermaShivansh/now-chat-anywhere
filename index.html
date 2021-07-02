@@ -80,7 +80,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const name = prompt("Please enter your Name")
-      const socket = io("https://now-chat-anywhere.herokuapp.com/")
+      const socket = io(`http://localhost:${process.env.PORT}/`)
       socket.on("connect", () => {
         let message = `<li class="p-2 mb-3" style="background:#d3f9b5">Welcome to our Chat App!!!.<br>You can Start Chatting...</li>`
         document.querySelector(".messagelist").innerHTML += message
