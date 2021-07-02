@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
+    <style>
+      body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        color: white;
+        overflow-x: hidden;
+      }
+      .chatdiv {
+        min-height: 100vh;
+        width: 100%;
+      }
+      .messaging {
+        height: 89vh;
+        background-color: azure;
+        color: black;
+      }
+      .messages {
+        height: 80vh;
+        overflow-y: auto;
+        text-decoration: none;
+        list-style: none;
+        background: url("https://i.pinimg.com/originals/68/d6/2f/68d62f9ba24fe972afc28cc3fef99789.jpg");
+        background-size: cover;
+      }
+      .messageblock {
+        border: 1px solid lightblue;
+        border-radius: 10px;
+      }
+      .messagelist {
+        height: 100%;
+      }
+      .text span {
+        background: white;
+        padding: 10px;
+        border-radius: 15px;
+      }
+      small {
+        color: black;
+        font-weight: 400;
+      }
+      .username {
+        color: green !important;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chatdiv container-fluid m-0 p-0 bg-dark overflow-hidden">
+      <h1 class="p-2">#Anywhere Chat</h1>
+
+      <div class="messaging container-fluid mb-1 position-relative p-0">
+        <div class="messageblock p-0 position-absolute col-md-8 mx-auto fixed-bottom">
+          <div class="messages position-relative">
+            <div class="messagelist position-absolute fixed-bottom">
+              <!-- <li><i class="far fa-user-circle"></i>&nbsp;Messages to be displayed here l</li> -->
+            </div>
+          </div>
+          <form class="inputMessage row my-2" action="">
+            <div class="col-10 mx-auto">
+              <input autofocus type="text" autocomplete="off" class="inputField form-control" id="formGroupExampleInput" placeholder="Type here...." />
+            </div>
+            <button onclick="sendToServer()" class="col-2" type="button" class="btn btn-light"><i class="far fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.2.9/purify.min.js" integrity="sha512-VOTFfd4vxPpuE98m9UQTN7j2N2/Blw44lZMhRTnZQqA2gOHq7Yvn5bdIDjjAZuFqqkDtppcjMW+dN3GYbhM94g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const name = prompt("Please enter your Name")
+      const socket = io("http://localhost:3000")
+      socket.on("connect", () => {
+        let message = `<li class="p-2 mb-3" style="background:#d3f9b5">Welcome to our Chat App!!!.<br>You can Start Chatting...</li>`
+        document.querySelector(".messagelist").innerHTML += message
+        socket.emit("dataToServer", { data: "Connected" })
+      })
+      document.querySelector(".inputMessage").addEventListener("submit", (e) => {
+        e.preventDefault()
+        sendToServer()
+        document.querySelector(".messages").scrollTo(0, document.querySelector(".messages").scrollHeight + 20)
+      })
+      function sendToServer() {
+        let inputField = document.querySelector(".inputField")
+        let cleanText = DOMPurify.sanitize(inputField.value)
+
+        if (inputField.value != "") {
+          socket.emit("chatMessageToServer", { text: inputField.value, id: socket.id, name: name })
+          inputField.value = ""
+        }
+      }
+      socket.on("chatMessageToAllClients", (data) => {
+        let id = Date.now() % 10000
+        console.log(data.name)
+        let message = `<li class="p-2 m-1 text ${socket.id == data.id ? `text-end` : ""}" id="key${id}"></li>`
+        document.querySelector(`.messagelist`).innerHTML += message
+        document.querySelector(`#key${id}`).innerHTML += socket.id != data.id ? `<span class="username">${data.name}: <small></small></span>` : `<span class="username"><small></small></span>`
+        document.querySelector(`#key${id} small`).innerText += `${data.text}`
+      })
+    </script>
+  </body>
+</html>
