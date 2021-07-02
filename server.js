@@ -13,9 +13,9 @@ const expressServer = ourApp.listen(PORT, () => {
 const io = socketio(expressServer)
 
 io.on("connect", (socket) => {
-  console.log(socket)
-  socket.on("dataToServer", (dataFromClient) => {
-    console.log(dataFromClient.data + " " + socket.id)
+  socket.on("newUser", (data) => {
+    console.log("New User Joined " + data.name + " with socket id " + socket.id)
+    io.emit("newUserNotification", data)
   })
   socket.on("chatMessageToServer", (data) => {
     console.log(data.text + " " + data.id)

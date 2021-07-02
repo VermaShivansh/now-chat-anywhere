@@ -54,6 +54,14 @@
         color: green !important;
         font-weight: 700;
       }
+      .newUserNotification {
+        font-size: smaller;
+        background-color: burlywood;
+        transform: scale(0.8);
+      }
+      form button {
+        transform: scale(0.97);
+      }
     </style>
   </head>
   <body>
@@ -67,9 +75,9 @@
               <!-- <li><i class="far fa-user-circle"></i>&nbsp;Messages to be displayed here l</li> -->
             </div>
           </div>
-          <form class="inputMessage row my-2" action="">
-            <div class="col-10 mx-0">
-              <input autofocus type="text" autocomplete="off" class="inputField form-control mx-0" id="formGroupExampleInput" placeholder="Type here...." />
+          <form class="inputMessage d-flex justify-content-between mt-1 mb-2" action="">
+            <div class="col-10 mx-0 p-0">
+              <input autofocus type="text" autocomplete="off" class="inputField form-control mx-0" id="formGroupExampleInput" style="border: none 0px !important; outline: none" placeholder="Type here...." />
             </div>
             <button onclick="sendToServer()" class="col-2 mx-0" type="button" class="btn btn-light"><i class="far fa-paper-plane"></i></button>
           </form>
@@ -90,7 +98,7 @@
       socket.on("connect", () => {
         let message = `<li class="p-2 mb-3" style="background:#d3f9b5">Welcome to our Chat App!!!.<br>You can Start Chatting...</li>`
         document.querySelector(".messagelist").innerHTML += message
-        socket.emit("dataToServer", { data: "Connected" })
+        socket.emit("newUser", { name: name })
       })
       document.querySelector(".inputMessage").addEventListener("submit", (e) => {
         e.preventDefault()
@@ -107,12 +115,15 @@
       }
       socket.on("chatMessageToAllClients", (data) => {
         let id = Date.now() % 10000
-        console.log(data.name)
-        let message = `<li class="p-2 m-1 text ${socket.id == data.id ? `text-end` : ""}" id="key${id}"></li>`
+        let message = `<li class="p-2 m-1 mb-2 text ${socket.id == data.id ? `text-end` : ""}" id="key${id}"></li>`
         document.querySelector(`.messagelist`).innerHTML += message
         document.querySelector(`#key${id}`).innerHTML += socket.id != data.id ? `<span class="username">${data.name}: <small></small></span>` : `<span class="username"><small></small></span>`
         document.querySelector(`#key${id} small`).innerText += `${data.text}`
         document.querySelector(".messages").scrollTo(0, document.querySelector(".messages").scrollHeight + 100)
+      })
+      socket.on("newUserNotification", (data) => {
+        let message = `<li class="p-2 m-1 text-center newUserNotification">${data.name} just joined the room...</li>`
+        document.querySelector(`.messagelist`).innerHTML += message
       })
     </script>
   </body>
