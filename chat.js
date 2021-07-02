@@ -2,7 +2,7 @@ const express = require("express")
 const ourApp = express()
 const socketio = require("socket.io")
 var PORT = process.env.PORT || 3000
-ourApp.use(express.static(__dirname + "/Frontend"))
+ourApp.use(express.static("Frontend"))
 
 const expressServer = ourApp.listen(PORT, () => {
   console.log("server Started")
