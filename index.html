@@ -21,17 +21,18 @@
         width: 100%;
       }
       .messaging {
-        height: 89vh;
+        height: 85vh;
         background-color: azure;
         color: black;
       }
       .messages {
-        height: 80vh;
+        height: 76vh;
         overflow-y: auto;
         text-decoration: none;
         list-style: none;
-        background: url("https://i.pinimg.com/originals/68/d6/2f/68d62f9ba24fe972afc28cc3fef99789.jpg");
+        background: url("https://images.unsplash.com/photo-1588420343624-8b15ebd3573d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8ODl8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60");
         background-size: cover;
+        background-position: center;
       }
       .messageblock {
         border: 1px solid lightblue;
@@ -67,10 +68,10 @@
             </div>
           </div>
           <form class="inputMessage row my-2" action="">
-            <div class="col-10 mx-auto">
-              <input autofocus type="text" autocomplete="off" class="inputField form-control" id="formGroupExampleInput" placeholder="Type here...." />
+            <div class="col-10 mx-0">
+              <input autofocus type="text" autocomplete="off" class="inputField form-control mx-0" id="formGroupExampleInput" placeholder="Type here...." />
             </div>
-            <button onclick="sendToServer()" class="col-2" type="button" class="btn btn-light"><i class="far fa-paper-plane"></i></button>
+            <button onclick="sendToServer()" class="col-2 mx-0" type="button" class="btn btn-light"><i class="far fa-paper-plane"></i></button>
           </form>
         </div>
       </div>
@@ -79,7 +80,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      const name = prompt("Please enter your Name")
+      let name = null
+      do {
+        name = prompt("Reason for deletion? Note is required")
+      } while (name == null || name === "")
+      document.querySelector(".chatdiv h1").innerHTML = `#Anywhere Chat - ${name}`
       const socket = io(`/`)
       socket.on("connect", () => {
         let message = `<li class="p-2 mb-3" style="background:#d3f9b5">Welcome to our Chat App!!!.<br>You can Start Chatting...</li>`
@@ -89,7 +94,6 @@
       document.querySelector(".inputMessage").addEventListener("submit", (e) => {
         e.preventDefault()
         sendToServer()
-        document.querySelector(".messages").scrollTo(0, document.querySelector(".messages").scrollHeight + 20)
       })
       function sendToServer() {
         let inputField = document.querySelector(".inputField")
@@ -107,6 +111,7 @@
         document.querySelector(`.messagelist`).innerHTML += message
         document.querySelector(`#key${id}`).innerHTML += socket.id != data.id ? `<span class="username">${data.name}: <small></small></span>` : `<span class="username"><small></small></span>`
         document.querySelector(`#key${id} small`).innerText += `${data.text}`
+        document.querySelector(".messages").scrollTo(0, document.querySelector(".messages").scrollHeight + 100)
       })
     </script>
   </body>
